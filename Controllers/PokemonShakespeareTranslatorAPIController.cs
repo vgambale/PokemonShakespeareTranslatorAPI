@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PokemonShakespeareTranslatorAPI.Utilities.PokemonServices;
+using PokemonShakespeareTranslatorAPI.Utilities.ShakespereanTranslationServices;
 
 namespace PokemonShakespeareTranslatorAPI.Controllers
 {
@@ -13,9 +15,13 @@ namespace PokemonShakespeareTranslatorAPI.Controllers
 	{
 		private ILog logger;
 		[HttpGet("{pokemonName}")]
-		public string Get(string pokemonName)
+		public PokemonControllerResponse Get(string pokemonName)
 		{
-			return pokemonName;
+			int pokemonid = Pokemon.getPokemonId(pokemonName);
+			string pokemonDescription = Pokemon.getPokemonDescription(pokemonid);
+			//string resultDescription = ShakespeareTranslator.GetShakespeareTranslation(pokemonDescription);
+			PokemonControllerResponse test = new PokemonControllerResponse("test", "test");
+			return test;
 		}
 
 		public PokemonShakespeareTranslatorAPIController(ILog logger)
