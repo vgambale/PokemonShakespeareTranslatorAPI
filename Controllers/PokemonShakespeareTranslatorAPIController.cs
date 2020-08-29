@@ -11,10 +11,16 @@ namespace PokemonShakespeareTranslatorAPI.Controllers
 	[ApiController]
 	public class PokemonShakespeareTranslatorAPIController : ControllerBase
 	{
+		private ILog logger;
 		[HttpGet("{pokemonName}")]
 		public string Get(string pokemonName)
 		{
 			return pokemonName;
+		}
+
+		public PokemonShakespeareTranslatorAPIController(ILog logger)
+		{
+			this.logger = logger;
 		}
 	}
 }

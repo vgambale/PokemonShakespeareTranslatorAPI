@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NLog;
 
 namespace PokemonShakespeareTranslatorAPI
 {
@@ -17,6 +19,7 @@ namespace PokemonShakespeareTranslatorAPI
 	{
 		public Startup(IConfiguration configuration)
 		{
+			LogManager.LoadConfiguration(System.String.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
 			Configuration = configuration;
 		}
 
@@ -26,6 +29,7 @@ namespace PokemonShakespeareTranslatorAPI
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddControllers();
+			services.AddSingleton<ILog, LogNlog>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
