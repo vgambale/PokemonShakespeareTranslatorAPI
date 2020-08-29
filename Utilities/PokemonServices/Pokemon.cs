@@ -7,21 +7,25 @@ namespace PokemonShakespeareTranslatorAPI.Utilities.PokemonServices
 {
 	public static class Pokemon
 	{
-		public static int getPokemonId(string pokemonName)
+		public static int getPokemonId(string pokemonName,ILog logger = null)
 		{
 			string url = "http://pokeapi.co/api/v2/pokemon";
 			url = url + "/" + pokemonName;
 			var restClient = new RestClient(url);
 			var request = new RestRequest(Method.GET);
 			var response = restClient.Execute(request);
-			if(response.StatusCode == System.Net.HttpStatusCode.NotFound)
+			if(response.StatusCode != System.Net.HttpStatusCode.OK)
 			{
-				return int.MaxValue;
+				if (logger != null)
+				{
+					logger.Error(string.Format("Pokemon not found error :{0}", response.StatusCode));
+				}
+					return int.MaxValue;
 			}
 			var obj = JsonConvert.DeserializeObject<dynamic>(response.Content);
 			return obj["id"];
 		}
-		public static string getPokemonDescription(int pokemonId)
+		public static string getPokemonDescription(int pokemonId,ILog logger = null)
 		{
 			string url = "https://pokeapi.co/api/v2/pokemon-species/";
 			url = url + "/" + pokemonId;
@@ -30,7 +34,14 @@ namespace PokemonShakespeareTranslatorAPI.Utilities.PokemonServices
 			var response = restClient.Execute(request);
 			if(response.StatusCode == System.Net.HttpStatusCode.NotFound)
 			{
-				return null;
+				if (response.StatusCode != System.Net.HttpStatusCode.OK)
+				{
+					if (logger != null)
+					{
+						logger.Error(string.Format("Pokemon description not found error :{0}", response.StatusCode));
+					}
+						return null;
+				}
 			}
 			PokemonDescriptionResponse obj = JsonConvert.DeserializeObject<PokemonDescriptionResponse>(response.Content);
 			return obj.flavor_text_entries.Where(x => x.version.name == "ruby").FirstOrDefault().flavor_text;
