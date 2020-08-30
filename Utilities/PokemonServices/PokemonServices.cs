@@ -9,6 +9,12 @@ namespace PokemonShakespeareTranslatorAPI.Utilities.PokemonServices
 {
 	public static class PokemonServices
 	{
+		/// <summary>
+		/// Method to retreive pokemon id given pokemon name
+		/// </summary>
+		/// <param name="pokemonName"></param>
+		/// <param name="logger"></param>
+		/// <returns></returns>
 		public static int getPokemonId(string pokemonName,ILog logger = null)
 		{
 			string url = "http://pokeapi.co/api/v2/pokemon";
@@ -27,6 +33,12 @@ namespace PokemonShakespeareTranslatorAPI.Utilities.PokemonServices
 			var obj = JsonConvert.DeserializeObject<dynamic>(response.Content);
 			return obj["id"];
 		}
+		/// <summary>
+		/// Method to retreive pokemon description given pokemon id
+		/// </summary>
+		/// <param name="pokemonId"></param>
+		/// <param name="logger"></param>
+		/// <returns></returns>
 		public static string getPokemonDescription(int pokemonId, ILog logger = null)
 		{
 			string url = "https://pokeapi.co/api/v2/pokemon-species/";
@@ -74,6 +86,10 @@ namespace PokemonShakespeareTranslatorAPI.Utilities.PokemonServices
 				return "no description found";
 			}
 		}
+		/// <summary>
+		/// Method to retreive all the pokemon from the pokeapi.co
+		/// </summary>
+		/// <returns></returns>
 		public static Dictionary<string,string> getAllPokemon()
 		{
 			string url = "https://pokeapi.co/api/v2/pokemon?limit=1050&offset=0";

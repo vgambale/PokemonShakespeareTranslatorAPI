@@ -1,12 +1,8 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PokemonShakespeareTranslatorAPI.Utilities.Entities
 {
-    public class Success
+	public class Success
     {
         [JsonProperty("total")]
         public int total { get; set; }

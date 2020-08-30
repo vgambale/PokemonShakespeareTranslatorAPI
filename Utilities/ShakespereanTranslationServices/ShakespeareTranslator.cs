@@ -1,15 +1,16 @@
 ﻿using Newtonsoft.Json;
 using PokemonShakespeareTranslatorAPI.Utilities.Entities;
 using RestSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PokemonShakespeareTranslatorAPI.Utilities.ShakespereanTranslationServices
 {
 	public static class ShakespeareTranslator
 	{
+		/// <summary>
+		/// Method to retreive shakespeare translation given a description text
+		/// </summary>
+		/// <param name="description"></param>
+		/// <returns></returns>
 		public static string GetShakespeareTranslation(string description)
 		{
 			string url = "https://api.funtranslations.com/translate/shakespeare.json";

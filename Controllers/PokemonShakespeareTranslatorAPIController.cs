@@ -20,8 +20,6 @@ namespace PokemonShakespeareTranslatorAPI.Controllers
 	{
 		private ILog logger;
 
-		private List<Pokemon> pokeDex;
-
 		[HttpGet("{pokemonName}")]
 		public PokemonControllerResponse Get(string pokemonName)		
 		
@@ -30,7 +28,7 @@ namespace PokemonShakespeareTranslatorAPI.Controllers
 			PokemonControllerResponse response = new PokemonControllerResponse();
 			if (!Caching.AppCache.Any())
 			{
-				string json = System.IO.File.ReadAllText("Pokedex.json");
+				string json = System.IO.File.ReadAllText(@"Pokedex.json");
 				Dictionary<string, string> pokeDex = JsonConvert.DeserializeObject<Dictionary<string,string>>(json);
 				Caching.AppCache = pokeDex;
 			}
