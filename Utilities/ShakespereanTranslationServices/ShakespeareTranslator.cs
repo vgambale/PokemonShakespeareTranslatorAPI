@@ -19,6 +19,14 @@ namespace PokemonShakespeareTranslatorAPI.Utilities.ShakespereanTranslationServi
 			request.AddParameter("application/json; charset=utf-8", JsonConvert.SerializeObject(requests), ParameterType.RequestBody);
 			request.RequestFormat = DataFormat.Json;
 			var response = restClient.Execute(request);
+			if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+			{
+				return "";
+			}
+			if (response.StatusCode != System.Net.HttpStatusCode.OK)
+			{
+				return null;
+			}
 			ShakespeareTranslatorResponse translation = JsonConvert.DeserializeObject<ShakespeareTranslatorResponse>(response.Content);
 			return translation.contents.translated;
 		}

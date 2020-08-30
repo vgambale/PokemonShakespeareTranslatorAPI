@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using PokemonShakespeareTranslatorAPI.Utilities;
+using PokemonShakespeareTranslatorAPI.Utilities.Entities;
 using PokemonShakespeareTranslatorAPI.Utilities.PokemonServices;
 using PokemonShakespeareTranslatorAPI.Utilities.ShakespereanTranslationServices;
 
@@ -14,24 +19,50 @@ namespace PokemonShakespeareTranslatorAPI.Controllers
 	public class PokemonShakespeareTranslatorAPIController : ControllerBase
 	{
 		private ILog logger;
+
+		private List<Pokemon> pokeDex;
+
 		[HttpGet("{pokemonName}")]
-		public PokemonControllerResponse Get(string pokemonName)
+		public PokemonControllerResponse Get(string pokemonName)		
+		
 		{
-			PokemonControllerResponse response = new PokemonControllerResponse("test", "test");
-			response.name = pokemonName;
-			int pokemonid = Pokemon.getPokemonId(pokemonName,logger);
-			if(pokemonid == int.MaxValue)
+			pokemonName = pokemonName.ToLower();
+			PokemonControllerResponse response = new PokemonControllerResponse();
+			if (!Caching.AppCache.Any())
 			{
+				string json = System.IO.File.ReadAllText("Pokedex.json");
+				Dictionary<string, string> pokeDex = JsonConvert.DeserializeObject<Dictionary<string,string>>(json);
+				Caching.AppCache = pokeDex;
+			}
+			if (Caching.AppCache.ContainsKey(pokemonName))
+			{
+				string pokemonDescription = Caching.AppCache[pokemonName];
+				string translatedPokemonDescription = ShakespeareTranslator.GetShakespeareTranslation(pokemonDescription);
+				if(translatedPokemonDescription == null)
+				{
+					response.name = pokemonName;
+					response.description = "Pokemon description not found";
+					response.statuscode = HttpStatusCode.NotFound;
+				}
+				else if(string.Compare(translatedPokemonDescription,"") == 0)
+				{
+					response.name = pokemonName;
+					response.description = "Too many request to the web server please wait or buy full version";
+					response.statuscode = HttpStatusCode.TooManyRequests;
+				}
+				else
+				{
+					response.name = pokemonName;
+					response.description = translatedPokemonDescription;
+					response.statuscode = HttpStatusCode.OK;
+				}
+			}
+			else
+			{
+				response.name = pokemonName;
 				response.description = "Pokemon not found";
-				return response;
+				response.statuscode = HttpStatusCode.NotFound;
 			}
-			string pokemonDescription = Pokemon.getPokemonDescription(pokemonid, logger);
-			if (pokemonDescription == null)
-			{
-				response.description = "Pokemon descriptio not found";
-				return response;
-			}
-			//string resultDescription = ShakespeareTranslator.GetShakespeareTranslation(pokemonDescription);
 			return response;
 		}
 
